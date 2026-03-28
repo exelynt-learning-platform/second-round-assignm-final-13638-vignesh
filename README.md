@@ -1,3 +1,5 @@
+# second-round-assignm-final-13638-vignesh
+Final Project Assignment - This repository contains the complete final project code and documentation.
 #  AI Chatbox
 
 A production-quality chat application built with Next.js App Router, Redux Toolkit, and the Vercel AI SDK.
