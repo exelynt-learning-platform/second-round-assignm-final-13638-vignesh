@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 'use client';
 
-import { memo } from 'react';
+import { memo, ComponentPropsWithoutRef } from 'react';
 import { Message } from '@/redux/chatSlice';
 import { User, Bot } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
@@ -39,8 +38,8 @@ const MessageBubble = memo(({ message }: MessageBubbleProps) => {
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               components={{
-                p: ({ node: _node, ...props }) => <p className="mb-2 last:mb-0" {...props} />,
-                a: ({ node: _node, ...props }) => (
+                p: ({ ...props }) => <p className="mb-2 last:mb-0" {...props} />,
+                a: ({ ...props }) => (
                   <a
                     className={`hover:underline underline-offset-2 break-all ${
                       isUser ? 'text-blue-100 font-semibold' : 'text-blue-600 dark:text-blue-400'
@@ -50,13 +49,17 @@ const MessageBubble = memo(({ message }: MessageBubbleProps) => {
                     {...props}
                   />
                 ),
-                ul: ({ node: _node, ...props }) => <ul className="list-disc pl-4 mb-3 space-y-1" {...props} />,
-                ol: ({ node: _node, ...props }) => <ol className="list-decimal pl-4 mb-3 space-y-1" {...props} />,
-                li: ({ node: _node, ...props }) => <li className="mb-1" {...props} />,
-                h1: ({ node: _node, ...props }) => <h1 className="text-xl font-bold mb-2 mt-4" {...props} />,
-                h2: ({ node: _node, ...props }) => <h2 className="text-lg font-bold mb-2 mt-3" {...props} />,
-                h3: ({ node: _node, ...props }) => <h3 className="text-base font-bold mb-2 mt-2" {...props} />,
-                code: ({ node: _node, inline, className: _className, children, ...props }: any) => {
+                ul: ({ ...props }) => <ul className="list-disc pl-4 mb-3 space-y-1" {...props} />,
+                ol: ({ ...props }) => <ol className="list-decimal pl-4 mb-3 space-y-1" {...props} />,
+                li: ({ ...props }) => <li className="mb-1" {...props} />,
+                h1: ({ ...props }) => <h1 className="text-xl font-bold mb-2 mt-4" {...props} />,
+                h2: ({ ...props }) => <h2 className="text-lg font-bold mb-2 mt-3" {...props} />,
+                h3: ({ ...props }) => <h3 className="text-base font-bold mb-2 mt-2" {...props} />,
+                code: ({ 
+                  inline, 
+                  children, 
+                  ...props 
+                }: ComponentPropsWithoutRef<'code'> & { inline?: boolean }) => {
                   return inline ? (
                     <code
                       className={`rounded px-1.5 py-0.5 text-xs font-mono break-words ${
@@ -79,7 +82,7 @@ const MessageBubble = memo(({ message }: MessageBubbleProps) => {
                     </div>
                   );
                 },
-                blockquote: ({ node: _node, ...props }) => (
+                blockquote: ({ ...props }) => (
                   <blockquote
                     className={`border-l-4 pl-4 py-1 mb-3 italic ${
                       isUser ? 'border-blue-400 text-blue-100' : 'border-gray-300 dark:border-zinc-700 text-gray-600 dark:text-zinc-400'
@@ -87,15 +90,15 @@ const MessageBubble = memo(({ message }: MessageBubbleProps) => {
                     {...props}
                   />
                 ),
-                table: ({ node: _node, ...props }) => (
+                table: ({ ...props }) => (
                   <div className="overflow-x-auto mb-3 border border-gray-200 dark:border-gray-700 rounded-lg">
                     <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-left text-sm" {...props} />
                   </div>
                 ),
-                th: ({ node: _node, ...props }) => (
+                th: ({ ...props }) => (
                   <th className={`px-4 py-2 font-semibold ${isUser ? 'bg-blue-700 text-white' : 'bg-gray-50 dark:bg-zinc-900 text-gray-700 dark:text-zinc-300'}`} {...props} />
                 ),
-                td: ({ node: _node, ...props }) => (
+                td: ({ ...props }) => (
                   <td className={`px-4 py-2 border-t ${isUser ? 'border-blue-500' : 'border-gray-200 dark:border-zinc-800'}`} {...props} />
                 ),
               }}

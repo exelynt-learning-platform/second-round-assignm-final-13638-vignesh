@@ -18,7 +18,7 @@ export default function ThemeToggle() {
 
   const toggleTheme = (e: React.MouseEvent) => {
     // Fallback if browser doesn't support View Transitions
-    if (!(document as any).startViewTransition) {
+    if (!document.startViewTransition) {
       setTheme(isDark ? 'light' : 'dark');
       return;
     }
@@ -31,7 +31,7 @@ export default function ThemeToggle() {
       Math.max(y, innerHeight - y)
     );
 
-    const transition = (document as any).startViewTransition(() => {
+    const transition = document.startViewTransition(() => {
       // 1. Force React to eagerly trigger the theme state change
       import('react-dom').then((reactDom) => {
         reactDom.flushSync(() => {

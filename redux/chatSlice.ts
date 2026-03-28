@@ -11,10 +11,13 @@ interface ChatState {
   error: string | null;
 }
 
-// Helper to save to localStorage
+// Helper to safe-save to localStorage
 const saveMessages = (messages: Message[]) => {
-  if (typeof window !== 'undefined') {
+  if (typeof window === 'undefined') return;
+  try {
     localStorage.setItem('chat_messages', JSON.stringify(messages));
+  } catch (error) {
+    console.warn('Failed to save messages to localStorage:', error);
   }
 };
 
@@ -24,9 +27,13 @@ const initialState: ChatState = {
   error: null,
 };
 
-export const sendMessage = createAsyncThunk(
+export const sendMessage = createAsyncThunk<
+  string, // Return type
+  Message[], // First argument (arg)
+  { rejectValue: string } // Config
+>(
   'chat/sendMessage',
-  async (messages: Message[], { rejectWithValue }) => {
+  async (messages, { rejectWithValue }) => {
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
@@ -37,14 +44,15 @@ export const sendMessage = createAsyncThunk(
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || 'Failed to get AI response');
       }
 
       const data = await response.json();
-      return data.text as string;
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+      return data.text;
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'An unknown error occurred';
+      return rejectWithValue(message);
     }
   }
 );
@@ -67,7 +75,11 @@ const chatSlice = createSlice({
       state.loading = false;
       state.error = null;
       if (typeof window !== 'undefined') {
-        localStorage.removeItem('chat_messages');
+        try {
+          localStorage.removeItem('chat_messages');
+        } catch (error) {
+          console.warn('Failed to remove messages from localStorage:', error);
+        }
       }
     },
   },
